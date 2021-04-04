@@ -170,7 +170,8 @@ session_start();
                                             $tt=$f['role'];
                                             ?>
                                           
-                                        <div class='tab-pane fade show  <?php if ($getIndex == 1){echo 'active';}?>' id=<?php echo $f['role'] ?> role='tab' data-toggle='tab' aria-labelledby='home-tab'>
+                                        <!-- <div class='tab-pane fade show  <?php //if ($getIndex == 1){echo 'active';}?>' id=<?php// echo $f['role'] ?> role='tab' data-toggle='tab' aria-labelledby='home-tab'> -->
+                                        <div class='tab-pane fade show <?php if ($getIndex == 1){echo 'active';}?>' id=<?php echo $f['role'] ?> role='tabpanel' aria-labelledby='home-tab'>
                                         <!-- <p><?php //echo $f['fname'] ?></p> -->
                                            
                                                 <!-- Start of foreach funcion of get article per faculty  -->
@@ -281,9 +282,9 @@ $('#mytable').DataTable({
    });
 
  
-$(function () {
-    $('#myTab li:last-child a').tab('show')
-  })
+//  $(function () {    
+//      $('#myTab li:last-child a').tab('show')
+//   })
 </script>
   
 </body>
