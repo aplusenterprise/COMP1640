@@ -180,7 +180,8 @@ session_start();
     <script src="assets/js/plugins.js"></script>
     <script src="assets/js/scripts.js"></script>
 
-  
+  <script>
+  </script>
 </body>
 
 </html>

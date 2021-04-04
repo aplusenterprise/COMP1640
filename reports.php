@@ -22,7 +22,7 @@ session_start();
     <title>Manager</title>
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <link rel="shortcut icon" type="image/png" href="assets/img/icon/favicon.ico">
-   
+    <script type="text/javascript" src="https://www.google.com/jsapi"></script>
     <link rel="stylesheet" href="assets/css/bootstrap.min.css">
     <link rel="stylesheet" href="assets/css/font-awesome.min.css">
     <link rel="stylesheet" href="assets/css/themify-icons.css">
@@ -377,6 +377,11 @@ session_start();
             var chart = new google.visualization.ColumnChart(document.getElementById("chart_div"));
             chart.draw(data, options);
     }
+    chart.draw(data, options);
+            $(window).resize(function(){
+                drawChart();           
+    
+            });
  </script>
 
 <script type="text/javascript">
@@ -412,6 +417,11 @@ session_start();
             var chart = new google.visualization.ColumnChart(document.getElementById("barchart_material"));
             chart.draw(data, options);
     }
+    chart.draw(data, options);
+            $(window).resize(function(){
+                drawChart();           
+    
+            });
  </script>
 
 

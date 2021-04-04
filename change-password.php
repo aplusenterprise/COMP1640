@@ -99,7 +99,7 @@ session_start();
     <!-- page container area start -->
     <div class="page-container">
         <!-- sidebar menu area start -->
-       <?php  include 'sidebar.php' ?>
+       <?php  include 'header-coor.php' ?>
         <!-- sidebar menu area end -->
         <!-- main content area start -->
         <div class="main-content">

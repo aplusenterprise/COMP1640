@@ -51,7 +51,7 @@ session_start();
                 
                 //Make sure we have a filepath 
                 if(in_array($fileType, $allowedFileType)){
-                    if($file_size > 102400 ){
+                    if($file_size > 10485760 ){
                         $response= array(
                             "status" => "alert-danger",
                             "message" => "Image Size Should Be less Than 10MB."
@@ -115,7 +115,7 @@ session_start();
               //Make sure we have a filepath 
               if(in_array($fileType, $allowedFileType)){
 
-                if( $file_size > 102400 ){
+                if( $file_size > 10485760 ){
                     $response2 = array(
                         "status2" => "alert-danger",
                         "message2" => "Document Size Should Be less Than 10MB."
@@ -483,6 +483,32 @@ session_start();
     <script src="assets/js/plugins.js"></script>
     <script src="assets/js/scripts.js"></script>
     <script>
+       $('#test').on( 'change', function() {
+       
+        myfile= $( this ).val();
+        if ($("#test")[0].files.length < 4) {
+        
+        } else{  
+            alert('Only 3 file allowed to upload!');    
+            this.value = "";
+            
+        }
+        });
+
+        $('#inputGroupFile01').on( 'change', function() {
+       
+       myfile= $( this ).val();
+       if ($("#inputGroupFile01")[0].files.length < 4) {
+       
+       } else{  
+           alert('Only 3 file allowed to upload!');    
+           this.value = "";
+           
+       }
+       });
+    </script>
+
+    <script>
         document.getElementById('test').addEventListener('change', function(e) {
         var list = document.getElementById('filelist');
         list.innerHTML = '';
@@ -502,7 +528,9 @@ session_start();
         if (list.innerHTML == '') list.style.display = 'none';
         else list.style.display = 'block';
         });
+        
     </script>
+
 
         
 

@@ -439,7 +439,27 @@ session_start();
     <!-- others plugins -->
     <script src="assets/js/plugins.js"></script>
     <script src="assets/js/scripts.js"></script>
-    
+    <script>
+       $('#test').on( 'change', function() {       
+        myfile= $( this ).val();
+        if ($("#test")[0].files.length < 4) {
+        
+        } else{  
+            alert('Only 3 file allowed to upload!');    
+            this.value = "";            
+        }
+        });
+
+        $('#inputGroupFile02').on( 'change', function() {       
+       myfile= $( this ).val();
+       if ($("#inputGroupFile02")[0].files.length < 4) {
+       
+       } else{  
+           alert('Only 3 file allowed to upload!');    
+           this.value = "";
+       }
+       });
+    </script>
 <script>
 
     // var uploadField = document.getElementById("test");
@@ -522,11 +542,7 @@ session_start();
         alert('Only .jpg, .jpeg and .png file allowed!');    
         this.value = "";
     }
-    });
-    
-   
-  
-    
+    });    
     </script> 
     <script>
         document.getElementById('test').addEventListener('change', function(e) {

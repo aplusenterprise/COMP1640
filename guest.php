@@ -8,10 +8,10 @@ session_start();
     header("location:login.php");
   }
 
-  if(isset($_GET["accept-cookies"])){
-    setcookie("accept-cookies", $_SESSION['username'], time()+31556925);
-    header("location:guest.php");
-  }
+//   if(isset($_GET["accept-cookies"])){
+//     setcookie("accept-cookies", $_SESSION['username'], time()+31556925);
+//     header("location:guest.php");
+//   }
 
     //Get     
     $fac=$_SESSION['faculty'];
@@ -140,7 +140,7 @@ session_start();
                         <div class="breadcrumbs-area clearfix">
                             <h4 class="page-title pull-left"><?php echo "Guest Dashboard "; ?></h4>
                             <ul class="breadcrumbs pull-left">
-                                <li><a href="index.html">Home</a></li>
+                                <li><a href="guest.php">Home</a></li>
                                 <li ><span><?php echo "Faculty of $facu "; ?></span></li>
                             </ul>
                         </div>
@@ -156,20 +156,7 @@ session_start();
                     </div>
                 </div>
             </div>
-            <?php
-    if(!isset($_COOKIE["accept-cookies"])){
-        ?>         
-                    
-                    <div class="cookie-banner" style="display: block;z-index: 1;padding: 0;">
-                        <div class="container">
-                            <p> Before browse our site, please accept our <a href="https://www.cookiesandyou.com/" target="blank" >cookies policy </a>
-                                <span class="cookie-button" style="padding: 1px;"><a href="?accept-cookies" style="color: white; padding: 13px;">OK! Continue</a></span></p>             
-                            
-                        </div>
-                    </div>
-        <?php
-         }
-        ?>
+          
       
             <!-- page title area end -->
             <div class="main-content-inner">
@@ -224,10 +211,10 @@ session_start();
     <!-- others plugins -->
     <script src="assets/js/plugins.js"></script>
     <script src="assets/js/scripts.js"></script>
-    <script>
+    <!-- <script>
     if($('.cookie-banner').length){
         $('.cookie-banner').slideDown(800);
-    }</script>
+    }</script> -->
 
 </body>
 

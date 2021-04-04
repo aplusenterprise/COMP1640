@@ -4,11 +4,12 @@ include('config.php');
 include 'include/function.php';
 require "phpmailer/PHPMailerAutoload.php";
 
-if(isset($_POST['submit']))
+if ($_SERVER["REQUEST_METHOD"] == "POST") 
 {
 // Define variables and initialize with empty values
+ $email_err = $phone_err = $password_err = "";  
 $username = $email = $password = $passwordrepeat = $faculty = $phone ="";
-$invalid_err = "";
+
 
 // Define variables 
 $username = trim($_POST['username']); 
@@ -18,45 +19,95 @@ $passwordrepeat = trim($_POST['password_repeat']);
 $faculty = trim($_POST['faculty']); 
 $phone = trim($_POST['phone']); 
 
-$emailadd = filter_var($_POST['email'], FILTER_SANITIZE_EMAIL);
-    
-      
- if ($_POST['password'] !== $_POST['password_repeat']) {
-    $invalid_err="<div class='text-danger'>Password and Confirm password should match!</div>";   
- }
  
- else if (!preg_match("/^[a-zA-Z-' ]*$/",$username)) {
-  $invalid_err="<div class='text-danger'>Only letters and white space allowed for Username!</div>";   
- 
-}
+  // Validate email
+  if(empty(($_POST['email']))){
+    $email_err = 'Please enter email';
+  } else {
+    $email = filter_var($_POST['email'], FILTER_SANITIZE_EMAIL);
+    $email_add = $_POST['email'];      
+    $stmt = $conn->prepare("SELECT count(*) as UserEmail FROM user WHERE UserEmail=:email");
+    $stmt->bindValue(':email', $email_add, PDO::PARAM_STR);
+    $stmt->execute(); 
+    $count = $stmt->fetchColumn();
 
-else if (!filter_var($emailadd, FILTER_VALIDATE_EMAIL)) {
-  $invalid_err="<div class='text-danger'>Invalid email format!</div>"; 
+    $stmt2 = $conn->prepare("SELECT count(*) as UserEmail FROM request WHERE UserEmail=:email");
+    $stmt2->bindValue(':email', $email_add, PDO::PARAM_STR);
+    $stmt2->execute(); 
+    $count2 = $stmt2->fetchColumn();
+
+    if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
+      $email_err = '<span class="text-danger">Invalid email format!</span>';
+    }
+  else{
+    if($count > 0){
+      $email_err = '<span class="text-danger">Email <b>'.$email_add.'</b> is already taken!</span>';
+    }
+    else if($count2 > 0){
+      $email_err =  '<span class="text-danger">Email <b>'.$email_add.'</b> is already taken!</span>';
+    } 
+  }
+  }
+
   
-}
-else if(!preg_match("/^[0-9]{10}$ || ^[0-9]{11}$/" , $phone)) {
-  $invalid_err="<div class='text-danger'>Invalid phone format!</div>";   
-}
- else  
-  {  
+  // Validate username
+  if(empty(($_POST['username']))){
+    $username_err = 'Please enter username';
+  } else {
+    // Prepare a select statement
+    $user_name = $_POST['username'];      
+    $stmt = $conn->prepare("SELECT count(*) as UserName FROM user WHERE UserName=:username");
+    $stmt->bindValue(':username', $user_name, PDO::PARAM_STR);
+    $stmt->execute(); 
+    $count = $stmt->fetchColumn();
+     
+    $stmt2 = $conn->prepare("SELECT count(*) as UserName FROM request WHERE UserName=:username");
+    $stmt2->bindValue(':username', $user_name, PDO::PARAM_STR);
+    $stmt2->execute(); 
+    $count2 = $stmt2->fetchColumn();
+
+    if (!preg_match("/^[a-zA-Z-' ]*$/",$user_name)) {
+      $username_err ='<span class="text-danger">Only letters and white space allowed!</span>';
+    }
+    else{
+      if($count > 0){
+        $username_err ='<span class="text-danger">Username <b>'.$user_name.'</b> is already taken!</span>';
+      } 
+      
+      else if($count2 > 0){
+        $username_err ='<span class="text-danger">Username <b>'.$user_name.'</b> is already taken!</span>';
+      }
+    
+    }
+
+  }
+  // Validate password
+  if(empty($_POST['password'])){
+    $password_err = 'Please enter password';
+  } elseif(strlen($password) < 4){
+    $password_err = 'Password must be at least 4 characters ';
+  }
+
+
+   // Validate phone
+   if(empty($phone)){
+    
+
+    $phone_err = 'Please enter phone';
+  }  elseif (!preg_match('/(0[0-9]{9})/', $phone)){
+    $phone_err = 'Invalid phone pattern ';  
+  }elseif(strlen($phone) < 10 && strlen($phone) > 11) {  
+      $phone_err = "Mobile must have 10 to 11 digits.";  
+
+  }
+  
+  
 
  // Validate credentials
- if(empty($invalid_err)){
+ if(empty($username_err) && empty($email_err) && empty($password_err) && empty($phone_err)){
 
     try{
-        // SQL query to fetch information of registerd users and finds user match.
-        $stmt = $conn->prepare("SELECT UserEmail FROM user WHERE UserEmail = :name");   
-        //$stmt = $conn->prepare("SELECT * FROM user WHERE UserName = :name");  
-        $stmt->bindParam(':name', $email);
-        $stmt->execute();
-    
-        if($stmt->rowCount() > 0){
-          $error1="<div class='text-danger'>Email is taken!</div>";
-        }  
-
-        else{
-
-
+        
         $role ="student";
         $passwordHash = password_hash($password, PASSWORD_DEFAULT);														
         // $sql = "INSERT INTO user (UserName, UserEmail, UserPassword, FacultyID, UserRole, UserPhone) 
@@ -107,9 +158,6 @@ else if(!preg_match("/^[0-9]{10}$ || ^[0-9]{11}$/" , $phone)) {
             else {                
                 
          } 
-
-
-
               echo "<script>
               alert('Your account request is now pending for approval. Please wait for confirmation. Thank you.');
               window.location.href='login.php';
@@ -120,14 +168,14 @@ else if(!preg_match("/^[0-9]{10}$ || ^[0-9]{11}$/" , $phone)) {
               
           }	
       }
-    }
+    // }
         catch(PDOException $e)
         {
           $e->getMessage();
         }                           
   }     
 }
-}
+
 
 ?>
 <!doctype html>
@@ -312,34 +360,33 @@ label {
         <div class="container">
             <div class="login-box ptb--100 ">
             
-            <form  action="register.php" name="RegForm" method="post"  onsubmit="return GEEKFORGEEKS()">
+            <form  action="<?php echo htmlspecialchars($_SERVER["PHP_SELF"]); ?>" name="RegForm" method="post"  onsubmit="return GEEKFORGEEKS()">
                     <div class="login-form-head">
                         <h4>Sign up</h4>
                         <p>Hello there, Sign up and Join with Us</p>
                     </div>
-                    <span><?php 	if(isset($invalid_err)){
-                    echo $invalid_err;                   
-			            	}?>
+                    <?php if (isset($username_err)) echo $username_err; ?><br>
+                    <?php if (isset($email_err)) echo $email_err; ?>
                      
-                     <?php 	if(isset($error1)){
-                            echo $error1;                   
-			            	        }?></span>
                     <div class="login-form-body">
                         <div class="form-gp">
-                            <label for="exampleInputName1">Username</label>
-                            <input type="text" id="username" name="username" autocomplete="off"  onkeypress="return (event.charCode > 64 && event.charCode < 91) || (event.charCode > 96 && event.charCode < 123)">
+                            <label for="username">Username</label>
+                            <input type="text" id="username" name="username" autocomplete="off"  >
                              <!-- Response -->
-                             <div id="uname_result"></div>
+                             <div id="uname_result"> </div>
+                             
+                        
                             
                         </div>
                        
 
                         <div class="form-gp">
-                            <label for="exampleInputEmail1">Email address</label>
+                            <label for="email">Email address</label>
                             <input type="email" id="email" name="email">
                             <i class="ti-email"></i>
                             <!-- Response -->                           
-                            <div id="email_result"></div>
+                            <div id="email_result"> </div>
+                           
                         </div>
 
                         <div class="form-gp">                       
@@ -367,29 +414,29 @@ label {
                           
                         </div>
                         <div class="form-gp">
-                            <label for="exampleInput">Contact No</label>
-                            <input type="number" id="phone" name="phone" maxlength="11" onKeyDown="limitText(this,11);" onKeyUp="limitText(this,11);"">
+                            <label for="phone">Contact No</label>
+                            <input type="number" id="phone" name="phone" maxlength="11" onKeyDown="limitText(this,11);" onKeyUp="limitText(this,11);">
                             <i class="ti-mobile"></i>
-                            <?php 	if(isset($error2)){
-                            echo $error2;                   
-			            	        }?>
+                          <?php if (isset($phone_err)) echo $phone_err; ?>
                         </div>
                                              
                         
                         <div class="form-gp">
-                            <label for="exampleInputPassword1">Password</label>
+                            <label for="password">Password</label>
                             <input type="password" id="password" name="password">
                             <i class="ti-lock"></i>
                             <div class="text-danger"></div>
+                            <?php if (isset($password_err)) echo $password_err; ?>
                         </div>
                         <div class="form-gp">
-                            <label for="exampleInputPassword2">Confirm Password</label>
+                            <label for="password_repeat">Confirm Password</label>
                             <input type="password" id="password_repeat"name="password_repeat">
                             <i class="ti-lock"></i>
                             <div class="text-danger"></div>
                         </div>
                         <div class="submit-btn-area">
                             <button id="form_submit" name ="submit" type="submit">Submit <i class="ti-arrow-right"></i></button>
+                            <!-- <input type="submit" name="submit" value="Submit">    -->
                            
                         </div>
                         <div class="form-footer text-center mt-5">

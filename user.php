@@ -133,6 +133,7 @@ session_start();
                             <button type="button" id=myButton class="btn btn-primary btn-sm pull-right">Add New User</button>
                             </div>
                             </div>
+                            <div class="card" style="overflow-x:auto;">
                             <ul class="nav nav-tabs" id="myTab" role="tablist">
                                 <?php
                                 $selection=0;
@@ -169,7 +170,7 @@ session_start();
                                             $tt=$f['role'];
                                             ?>
                                           
-                                        <div class='tab-pane fade show <?php if ($getIndex == 1){echo 'active';}?>' id=<?php echo $f['role'] ?> role='tabpanel' aria-labelledby='home-tab'>
+                                        <div class='tab-pane fade show  <?php if ($getIndex == 1){echo 'active';}?>' id=<?php echo $f['role'] ?> role='tab' data-toggle='tab' aria-labelledby='home-tab'>
                                         <!-- <p><?php //echo $f['fname'] ?></p> -->
                                            
                                                 <!-- Start of foreach funcion of get article per faculty  -->
@@ -181,7 +182,7 @@ session_start();
                                                             <div class="card">
                                                                 <div class="card-body">
                                                                   
-                                                                    <table class="table">                                                                      
+                                                                    <table class="table" id="mytable" class="display">                                                                      
                                                                         <thead>
                                                                         <tr>
                                                                         <th scope="col">#</th>
@@ -220,7 +221,7 @@ session_start();
                         </div>
                     </div>
             </div>
-                            
+            </div>               
 
                                     
                                 
@@ -263,6 +264,26 @@ session_start();
         document.getElementById("myButton").onclick = function () {
         location.href = "add-user.php";
     };
+
+    
+    
+</script>
+<script>
+// $('#home-tab').tabs({
+//    activate: function(event, ui) { 
+//       $($.fn.dataTable.tables(true)).DataTable()
+//          .columns.adjust()
+//          .responsive.recalc(); 
+//    }
+// });
+$('#mytable').DataTable({
+      responsive: true
+   });
+
+ 
+$(function () {
+    $('#myTab li:last-child a').tab('show')
+  })
 </script>
   
 </body>

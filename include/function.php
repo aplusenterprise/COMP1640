@@ -756,16 +756,17 @@ function disableEditbtn($sid, $f, $conn){
              if($status == 0) {                     
                 
               echo '<input type="submit" class="btn btn-primary" name="submit" value="Update" />&nbsp;
-              <button type="button" class="btn btn-default">Close</button>';
+              <a href="student_upload.php" class="btn btn-default">Close</a>';
             }
               else{
                 echo '<button type="submit" name="submit" value="Upload" class="btn btn-primary" disabled>You can no longer edit</button>&nbsp;
-                <button type="button" class="btn btn-default" >Close</button>' ;
+                <a href="student_upload.php" class="btn btn-default">Close</a>' ;
               }
             }
             else{
             echo '<button type="submit" name="submit" value="Upload" class="btn btn-primary" disabled>You can no longer edit</button>&nbsp;
-			<button type="button" class="btn btn-default" >Close</button>' ;
+            <a href="student_upload.php" class="btn btn-default">Close</a>
+			' ;
             }
         }
     }

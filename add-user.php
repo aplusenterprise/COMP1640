@@ -37,12 +37,14 @@ session_start();
          else if (!preg_match('/(0[0-9]{9})/', $phone)){
             $invalid_err="<div class='text-danger'>Invalid phone format!</div>";
           }
-        //   else if(!preg_match("/^[0-9]{3}-[0-9]{4}-[0-9]{4}$/", $phone)) {
-        //     $invalid_err="<div class='text-danger'>Invalid phone format!</div>";   
-            
-        //   }
+          
+          else if (strlen($_POST["password"]) <= 4) {
+            $invalid_err = "<div class='text-danger'>Your Password Must Contain At Least 4 Characters!</div>";
+          }
+        
 
           else{
+              
             $stmt = $conn->prepare("SELECT COUNT(*) FROM user WHERE UserName = :name OR UserEmail = :email");
             $stmt->execute(array(':name'  => $username,':email' => $email));
             $count = $stmt->fetchColumn();

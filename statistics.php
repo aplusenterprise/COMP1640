@@ -22,6 +22,7 @@ session_start();
     <title>Statistic</title>
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <link rel="shortcut icon" type="image/png" href="assets/img/icon/favicon.ico">
+    <script type="text/javascript" src="https://www.google.com/jsapi"></script>
     <link rel="stylesheet" href="assets/css/bootstrap.min.css">
     <link rel="stylesheet" href="assets/css/font-awesome.min.css">
     <link rel="stylesheet" href="assets/css/themify-icons.css">
@@ -46,7 +47,13 @@ session_start();
 	<!--Load Paul Irish’s Debounced resize plug-in-->
 	<script src="js/debounce.js"></script>
   
-    
+    <style>
+    @media (min-width:320px)  { /* smartphones, iPhone, portrait 480x320 phones */ }
+@media (min-width:481px)  { /* portrait e-readers (Nook/Kindle), smaller tablets @ 600 or @ 640 wide. */ }
+@media (min-width:641px)  { /* portrait tablets, portrait iPad, landscape e-readers, landscape 800x480 or 854x480 phones */ }
+@media (min-width:961px)  { /* tablet, landscape iPad, lo-res laptops ands desktops */ }
+@media (min-width:1025px) { /* big landscape tablets, laptops, and desktops */ }
+@media (min-width:1281px) { /* hi-res laptops and desktops */ }</style>
    
 </head>
 
@@ -107,7 +114,7 @@ session_start();
                 </div>
             </div>
             <!-- page title area end -->
-            <div class="main-content-inner">
+            <div class="main-content-inner" >
                   <!-- bar chart start -->
                   <div class="row">
                     <div class="col-lg-6 mt-5">                    
@@ -184,6 +191,7 @@ session_start();
     <script src="assets/js/plugins.js"></script>
     <script src="assets/js/scripts.js"></script>
     <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
+    
 
 
 
@@ -209,7 +217,7 @@ session_start();
         ]);
 
         var options = {
-          title: 'Percentage of Contribution per faculty(Academic Year: 2020)',
+          title: 'Contribution per faculty(Academic Year: 2020)',
            height: '500', 
            colors: ['#e0440e', '#e6693e', '#ec8f6e', '#f3b49f', '#f6c7b6'],
         };
@@ -217,7 +225,14 @@ session_start();
         var chart = new google.visualization.PieChart(document.getElementById('piechart'));
 
         chart.draw(data, options);
+        
       }
+      chart.draw(data, options);
+        $(window).resize(function(){
+            chart2();
+           
+ 
+        });
       
     </script>
      <script type="text/javascript">
@@ -242,7 +257,7 @@ session_start();
         ]);
 
         var options = {
-          title: 'Percentage of Contribution per faculty(Academic Year: 2021)',
+          title: 'Contribution per faculty(Academic Year: 2021)',
            height: '500', 
            colors: ['#e0440e', '#e6693e', '#ec8f6e', '#f3b49f', '#f6c7b6'],
         };
@@ -251,7 +266,12 @@ session_start();
 
         chart.draw(data, options);
       }
-      
+      chart.draw(data, options);
+        $(window).resize(function(){
+            chart2();
+           
+ 
+        });
       
     </script>
   
@@ -259,6 +279,8 @@ session_start();
         <script type="text/javascript">
             google.load("visualization", "1", {packages:["corechart"]});
             google.setOnLoadCallback(drawChart);
+            chart.draw(data, options);
+            
             function drawChart() {
             var data = google.visualization.arrayToDataTable([
 
@@ -282,18 +304,24 @@ session_start();
                 title: 'Total Contributions per Faculty (Academic Year: 2020)', 
                 height: 400,
                 bar: {groupWidth: "30%"},  
-                colors: ['#FBBC05'],               
-                chartArea: {left:80.6,top:20, width:539.4,height:"340px"},                
-                vAxis: {minValue: 0}
+                chartArea: {left:80.6,top:20, width:539.4,height:"340px"},
+                colors: ['#FBBC05'],
+                vAxis: { format: '0'}             
+               
             };
             var chart = new google.visualization.ColumnChart(document.getElementById("columnchart_material"));
             chart.draw(data, options);
     }
+    $(window).resize(function(){
+                drawChart();           
+    
+            });
  </script>
 
 <script type="text/javascript">
             google.load("visualization", "1", {packages:["corechart"]});
             google.setOnLoadCallback(drawChart);
+            
             function drawChart() {
             var data = google.visualization.arrayToDataTable([
 
@@ -324,22 +352,39 @@ session_start();
             var chart = new google.visualization.ColumnChart(document.getElementById("columnchart_material2"));
             chart.draw(data, options);
     }
+    chart.draw(data, options);
+            $(window).resize(function(){
+                drawChart();           
+    
+            });
  </script>
 
 <script type="text/javascript">
             google.load("visualization", "1", {packages:["corechart"]});
             google.setOnLoadCallback(drawChart);
+          
             function drawChart() {
             var data = google.visualization.arrayToDataTable([
 
-            ['Faculty', 'Total Contributions'],
+            ['Faculty', 'Total Contributors'],
             <?php 
-            $sqlpie = "SELECT  FacultyName, COUNT(user.UserId) AS total FROM submission 
-            INNER JOIN studentsubmission ON submission.SubmissionID = studentsubmission.SubmissionID
-            INNER JOIN faculty ON submission.FacultyID = faculty.FacultyID
-            INNER JOIN user ON faculty.FacultyID = user.FacultyID
-            WHERE AcademicYear ='2020' AND UserRole='student' GROUP BY submission.FacultyID, submission.AcademicYear";
-            $fire = $conn->query($sqlpie);
+            $sqlpie =  "SELECT
+            FacultyName,
+            COUNT(
+                studentsubmission.studentsubmissionID
+            ) AS total,
+                    COUNT(DISTINCT
+                studentsubmission.UserId
+            ) AS contributor
+        FROM
+            submission
+        INNER JOIN studentsubmission ON submission.SubmissionID = studentsubmission.SubmissionID
+        INNER JOIN faculty ON submission.FacultyID = faculty.FacultyID
+        WHERE
+            AcademicYear = YEAR(CURDATE())-1
+        GROUP BY
+            submission.FacultyID,
+            submission.AcademicYear";            $fire = $conn->query($sqlpie);
             while ($result = $fire->fetch(PDO::FETCH_ASSOC)){          
                 echo"['".$result['FacultyName']."',".$result['total']."],";
             
@@ -348,6 +393,7 @@ session_start();
     
             ]);
 
+
           
             var options = {
                 title: 'Number of Contributors per Faculty (Academic Year: 2020)',
@@ -355,26 +401,44 @@ session_start();
                 bar: {groupWidth: "30%"},                 
                 chartArea: {left:80.6,top:20, width:539.4,height:"340px"},
                 colors: ['#74317D'],
-                vAxis: {minValue: 0}
+                vAxis: { format: '0'}
             };
             var chart = new google.visualization.ColumnChart(document.getElementById("columnchart_material3"));
             chart.draw(data, options);
     }
+    chart.draw(data, options);
+            $(window).resize(function(){
+                drawChart();           
+    
+            });
  </script>
 
 <script type="text/javascript">
             google.load("visualization", "1", {packages:["corechart"]});
             google.setOnLoadCallback(drawChart);
+          
             function drawChart() {
             var data = google.visualization.arrayToDataTable([
 
-            ['Faculty', 'Total Contributions'],
+            ['Faculty', 'Total Contributors'],
             <?php 
-            $sqlpie = "SELECT  FacultyName, COUNT(user.UserId) AS total FROM submission 
-            INNER JOIN studentsubmission ON submission.SubmissionID = studentsubmission.SubmissionID
-            INNER JOIN faculty ON submission.FacultyID = faculty.FacultyID
-            INNER JOIN user ON faculty.FacultyID = user.FacultyID
-            WHERE AcademicYear =YEAR(CURDATE()) AND UserRole='student' GROUP BY submission.FacultyID, submission.AcademicYear";
+            $sqlpie =  "SELECT
+            FacultyName,
+            COUNT(
+                studentsubmission.studentsubmissionID
+            ) AS total,
+                    COUNT(DISTINCT
+                studentsubmission.UserId
+            ) AS contributor
+        FROM
+            submission
+        INNER JOIN studentsubmission ON submission.SubmissionID = studentsubmission.SubmissionID
+        INNER JOIN faculty ON submission.FacultyID = faculty.FacultyID
+        WHERE
+            AcademicYear = YEAR(CURDATE())
+        GROUP BY
+            submission.FacultyID,
+            submission.AcademicYear";
             $fire = $conn->query($sqlpie);
             while ($result = $fire->fetch(PDO::FETCH_ASSOC)){          
                 echo"['".$result['FacultyName']."',".$result['total']."],";
@@ -396,6 +460,12 @@ session_start();
             var chart = new google.visualization.ColumnChart(document.getElementById("columnchart_material4"));
             chart.draw(data, options);
     }
+    chart.draw(data, options);
+            $(window).resize(function(){
+                drawChart();           
+    
+            });
+    
  </script>
 </body>
 
